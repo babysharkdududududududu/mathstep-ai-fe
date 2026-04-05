@@ -40,15 +40,16 @@ export default function PracticePage() {
         };
     }, []);
 
-    const handleSend = (text: string) => {
-        if (!text.trim() || isSending) {
+    const handleSend = (payload: { type: 'text' | 'math'; content: string }) => {
+        if (!payload.content.trim() || isSending) {
             return;
         }
 
         const userMessage: ChatMessageType = {
             id: `user-${Date.now()}-${Math.random().toString(16).slice(2)}`,
             role: 'user',
-            text,
+            type: payload.type,
+            text: payload.content,
         };
 
         setMessages((current) => [...current, userMessage]);
@@ -56,7 +57,7 @@ export default function PracticePage() {
 
         // Simulated AI response. Replace this with a real API request later.
         responseTimeoutRef.current = window.setTimeout(() => {
-            const aiMessage = getAiResponse(text);
+            const aiMessage = getAiResponse(payload.content, payload.type);
             setMessages((current) => [...current, aiMessage]);
             setIsSending(false);
         }, 700);
@@ -132,6 +133,7 @@ export default function PracticePage() {
                                 </div>
 
                                 <ChatInput onSend={handleSend} isSending={isSending} />
+
                             </div>
 
                             <div className="space-y-6">

@@ -1,8 +1,10 @@
 export type ChatMessageRole = 'ai' | 'user';
+export type ChatMessageType = 'text' | 'math';
 
 export type ChatMessage = {
     id: string;
     role: ChatMessageRole;
+    type: ChatMessageType;
     text: string;
     title?: string;
     hint?: string;
@@ -16,6 +18,7 @@ const defaultMessages: ChatMessage[] = [
     {
         id: createMessageId(),
         role: 'ai',
+        type: 'text',
         title: 'AI Tutor',
         text: "Great! Let's break this down together. To solve a quadratic equation of the form ax² + bx + c = 0, we often start by factoring.",
         hint: 'Step 1: Factor the equation',
@@ -23,6 +26,7 @@ const defaultMessages: ChatMessage[] = [
     {
         id: createMessageId(),
         role: 'user',
+        type: 'text',
         text: '-2 and -3?',
     },
 ];
@@ -57,7 +61,7 @@ export function getDefaultMessages(): ChatMessage[] {
     return defaultMessages.map((message) => ({ ...message }));
 }
 
-export function getAiResponse(userInput: string): ChatMessage {
+export function getAiResponse(userInput: string, type: ChatMessageType = 'text'): ChatMessage {
     const normalized = userInput.trim().toLowerCase();
 
     for (const template of responseTemplates) {
@@ -65,6 +69,7 @@ export function getAiResponse(userInput: string): ChatMessage {
             return {
                 id: createMessageId(),
                 role: 'ai',
+                type,
                 title: 'AI Tutor',
                 text: template.text,
                 hint: template.hint,
@@ -75,6 +80,7 @@ export function getAiResponse(userInput: string): ChatMessage {
     return {
         id: createMessageId(),
         role: 'ai',
+        type,
         title: 'AI Tutor',
         text: 'Mình đã nhận được câu hỏi của bạn. Hãy cùng qua từng bước để giải phương trình này nhé.',
         hint: 'Bắt đầu bằng cách tìm hai số nhân bằng 6 và tổng bằng -5.',
