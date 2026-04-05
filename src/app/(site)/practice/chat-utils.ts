@@ -45,13 +45,13 @@ const responseTemplates = [
     },
 ];
 
-const fallbackResponse: ChatMessage = {
-    id: createMessageId(),
-    role: 'ai',
-    title: 'AI Tutor',
-    text: 'Hãy cho mình biết bạn muốn hỏi gì về phương trình này. Mình sẽ giải thích từng bước cho bạn.',
-    hint: 'Bạn có thể hỏi: Làm sao để phân tích? hoặc Tại sao nghiệm là 2 và 3?',
-};
+// const fallbackResponse: ChatMessage = {
+//     id: createMessageId(),
+//     role: 'ai',
+//     title: 'AI Tutor',
+//     text: 'Hãy cho mình biết bạn muốn hỏi gì về phương trình này. Mình sẽ giải thích từng bước cho bạn.',
+//     hint: 'Bạn có thể hỏi: Làm sao để phân tích? hoặc Tại sao nghiệm là 2 và 3?',
+// };
 
 export function getDefaultMessages(): ChatMessage[] {
     return defaultMessages.map((message) => ({ ...message }));
