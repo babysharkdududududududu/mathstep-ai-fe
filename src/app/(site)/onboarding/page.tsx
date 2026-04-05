@@ -54,7 +54,8 @@ export default function OnboardingPage() {
             return;
         }
 
-        router.push('/');
+        localStorage.setItem('completedOnboarding', 'true');
+        router.push('/practice');
     };
 
     return (
