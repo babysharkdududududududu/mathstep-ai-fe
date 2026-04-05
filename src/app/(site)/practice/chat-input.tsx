@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-
+import { evaluate } from 'mathjs';
 interface ChatInputProps {
     onSend: (payload: { type: 'text' | 'math'; content: string }) => void;
     isSending: boolean;
@@ -80,7 +80,7 @@ export default function ChatInput({ onSend, isSending }: ChatInputProps) {
     const [mathValue, setMathValue] = useState('');
     const [showToolbar, setShowToolbar] = useState(false);
 
-    // st latexToMathjs = (latex: string) => {
+    // const latexToMathjs = (latex: string) => {
     //     return latex
     //         .replace(/\\frac{([^}]*)}{([^}]*)}/g, '($1)/($2)')
     //         .replace(/\\sqrt{([^}]*)}/g, 'sqrt($1)')

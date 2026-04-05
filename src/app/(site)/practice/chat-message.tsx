@@ -1,9 +1,7 @@
 'use client';
 
 import type { ChatMessage } from './chat-utils';
-// @ts-expect-error - react-katex doesn't have type definitions
 import { BlockMath } from 'react-katex';
-// @ts-expect-error - CSS import for KaTeX
 import 'katex/dist/katex.min.css';
 
 // Single chat bubble component for both user and AI messages.
