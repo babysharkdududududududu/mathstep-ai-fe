@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ChatInput from './chat-input';
 import ChatMessage from './chat-message';
-import PracticeSidebar from './practice-sidebar';
+// import PracticeSidebar from './practice-sidebar';
 import { ChatMessage as ChatMessageType, getAiResponse, getDefaultMessages } from './chat-utils';
 
 // const problemTitle = 'x² - 5x + 6 = 0';
