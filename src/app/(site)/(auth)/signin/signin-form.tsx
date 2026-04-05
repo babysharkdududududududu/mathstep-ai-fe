@@ -45,7 +45,7 @@ export default function SignInForm() {
     toast.success('Đăng nhập thành công. Chuyển đến onboarding...');
 
     setIsLoading(false);
-    router.push('/contact');
+    router.push('/onboarding');
   }
 
   return (
