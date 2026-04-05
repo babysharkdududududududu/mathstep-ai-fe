@@ -1,5 +1,4 @@
 'use client';
-// @ts-expect-error - react-katex does not ship types
 import { BlockMath } from 'react-katex';
 
 export type HintType = 'concept' | 'step' | 'formula' | 'solution';

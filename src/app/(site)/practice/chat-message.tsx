@@ -46,7 +46,6 @@
 'use client';
 
 import type { ChatMessage } from './chat-utils';
-// @ts-expect-error - react-katex doesn't have type definitions
 import { BlockMath } from 'react-katex';
 import 'katex/dist/katex.min.css'; // Không cần @ts-expect-error nữa
 
@@ -60,8 +59,8 @@ export default function ChatMessage({ message }: { message: ChatMessage }) {
         <div className={`flex ${isAi ? 'justify-start' : 'justify-end'}`}>
             <div
                 className={`max-w-[90%] rounded-[28px] border p-5 shadow-sm transition ${isAi
-                        ? 'border-slate-200 bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100'
-                        : 'bg-primary-500 text-white'
+                    ? 'border-slate-200 bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100'
+                    : 'bg-primary-500 text-white'
                     }`}
             >
                 {isAi && message.title ? (
