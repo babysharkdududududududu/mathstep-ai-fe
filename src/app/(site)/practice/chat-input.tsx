@@ -80,68 +80,46 @@ export default function ChatInput({ onSend, isSending }: ChatInputProps) {
     const [mathValue, setMathValue] = useState('');
     const [showToolbar, setShowToolbar] = useState(false);
 
-    // const latexToMathjs = (latex: string) => {
-    //     return latex
-    //         .replace(/\\frac{([^}]*)}{([^}]*)}/g, '($1)/($2)')
-    //         .replace(/\\sqrt{([^}]*)}/g, 'sqrt($1)')
-    //         .replace(/\\sin\s*([^\s()]+)/g, 'sin($1)')
-    //         .replace(/\\cos\s*([^\s()]+)/g, 'cos($1)')
-    //         .replace(/\\tan\s*([^\s()]+)/g, 'tan($1)')
-    //         .replace(/\\cot\s*([^\s()]+)/g, 'cot($1)')
-    //         .replace(/\\sec\s*([^\s()]+)/g, 'sec($1)')
-    //         .replace(/\\csc\s*([^\s()]+)/g, 'csc($1)')
-    //         .replace(/\\ln\s*([^\s()]+)/g, 'ln($1)')
-    //         .replace(/\\log\s*([^\s()]+)/g, 'log($1)')
-    //         .replace(/\\pi/g, 'pi')
-    //         .replace(/\s+/g, '')
-    //         .replace(/\\times/g, '*')
-    //         .replace(/\\cdot/g, '*')
-    //         .replace(/\\div/g, '/');
-    // };
-
-    // const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    //     event.preventDefault();
-
-    //     const content = mode === 'text' ? textValue.trim() : mathValue.trim();
-    //     if (!content || isSending) return;
-
-    //     if (mode === 'math') {
-    //         // 1️⃣ Log LaTeX
-    //         console.log('📐 LaTeX input:', content);
-
-    //         // 2️⃣ Chuyển LaTeX sang MathJS
-    //         const mathExpr = latexToMathjs(content);
-    //         console.log('🔧 Converted MathJS expression:', mathExpr);
-
-    //         // 3️⃣ Tính toán
-    //         try {
-    //             const result = evaluate(mathExpr);
-    //             console.log('✅ RESULT:', result);
-    //         } catch (err) {
-    //             console.error('❌ Cannot evaluate:', err);
-    //         }
-    //     }
-
-    //     onSend({
-    //         type: mode,
-    //         content,
-    //     });
-
-    //     setTextValue('');
-    //     setMathValue('');
-    // };
+    const latexToMathjs = (latex: string) => {
+        return latex
+            .replace(/\\frac{([^}]*)}{([^}]*)}/g, '($1)/($2)')
+            .replace(/\\sqrt{([^}]*)}/g, 'sqrt($1)')
+            .replace(/\\sin\s*([^\s()]+)/g, 'sin($1)')
+            .replace(/\\cos\s*([^\s()]+)/g, 'cos($1)')
+            .replace(/\\tan\s*([^\s()]+)/g, 'tan($1)')
+            .replace(/\\cot\s*([^\s()]+)/g, 'cot($1)')
+            .replace(/\\sec\s*([^\s()]+)/g, 'sec($1)')
+            .replace(/\\csc\s*([^\s()]+)/g, 'csc($1)')
+            .replace(/\\ln\s*([^\s()]+)/g, 'ln($1)')
+            .replace(/\\log\s*([^\s()]+)/g, 'log($1)')
+            .replace(/\\pi/g, 'pi')
+            .replace(/\s+/g, '')
+            .replace(/\\times/g, '*')
+            .replace(/\\cdot/g, '*')
+            .replace(/\\div/g, '/');
+    };
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         const content = mode === 'text' ? textValue.trim() : mathValue.trim();
-        console.log('🔥 SUBMIT CONTENT:', content, 'MODE:', mode);
-
         if (!content || isSending) return;
 
         if (mode === 'math') {
-            // Chỉ log LaTeX, không tính toán
+            // 1️⃣ Log LaTeX
             console.log('📐 LaTeX input:', content);
+
+            // 2️⃣ Chuyển LaTeX sang MathJS
+            const mathExpr = latexToMathjs(content);
+            console.log('🔧 Converted MathJS expression:', mathExpr);
+
+            // 3️⃣ Tính toán
+            try {
+                const result = evaluate(mathExpr);
+                console.log('✅ RESULT:', result);
+            } catch (err) {
+                console.error('❌ Cannot evaluate:', err);
+            }
         }
 
         onSend({
@@ -152,6 +130,28 @@ export default function ChatInput({ onSend, isSending }: ChatInputProps) {
         setTextValue('');
         setMathValue('');
     };
+
+    // const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    //     event.preventDefault();
+
+    //     const content = mode === 'text' ? textValue.trim() : mathValue.trim();
+    //     console.log('🔥 SUBMIT CONTENT:', content, 'MODE:', mode);
+
+    //     if (!content || isSending) return;
+
+    //     if (mode === 'math') {
+    //         // Chỉ log LaTeX, không tính toán
+    //         console.log('📐 LaTeX input:', content);
+    //     }
+
+    //     onSend({
+    //         type: mode,
+    //         content,
+    //     });
+
+    //     setTextValue('');
+    //     setMathValue('');
+    // };
 
     const insertLatex = (latex: string) => {
         setMathValue((prev) => prev + latex);
