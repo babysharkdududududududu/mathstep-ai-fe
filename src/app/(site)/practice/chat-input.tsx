@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from 'react';
 import 'katex/dist/katex.min.css';
 import { evaluate } from 'mathjs';
-import { InlineMath, BlockMath } from 'react-katex';
+import { BlockMath } from 'react-katex';
 
 interface ChatInputProps {
     onSend: (payload: { type: 'text' | 'math'; content: string }) => void;

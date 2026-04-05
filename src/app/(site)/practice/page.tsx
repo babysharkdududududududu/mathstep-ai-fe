@@ -17,7 +17,8 @@ export default function PracticePage() {
     const [isSending, setIsSending] = useState(false);
     const scrollContainerRef = useRef<HTMLDivElement | null>(null);
     const responseTimeoutRef = useRef<number | null>(null);
-    const [currentProblem, setCurrentProblem] = useState(mockProblems[0]);
+    // const [currentProblem, setCurrentProblem] = useState(mockProblems[0]);
+    const currentProblem = mockProblems[0];
 
     const handleHint = (type: HintType) => {
         const hintText = {
