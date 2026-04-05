@@ -1,7 +1,10 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
+import 'katex/dist/katex.min.css';
 import { evaluate } from 'mathjs';
+import { InlineMath, BlockMath } from 'react-katex';
+
 interface ChatInputProps {
     onSend: (payload: { type: 'text' | 'math'; content: string }) => void;
     isSending: boolean;
@@ -9,69 +12,26 @@ interface ChatInputProps {
 
 // Math formula toolbar buttons for common operations
 const mathButtons = [
-
-    { label: '→', latex: '\\to' },
-    { label: '←', latex: '\\leftarrow' },
-    { label: '↔', latex: '\\leftrightarrow' },
-    { label: '↑', latex: '\\uparrow' },
-    { label: '↓', latex: '\\downarrow' },
-
-    { label: '∈', latex: '\\in' },
-    { label: '∉', latex: '\\notin' },
-    { label: '∩', latex: '\\cap' },
-    { label: '∪', latex: '\\cup' },
-    { label: '⊂', latex: '\\subset' },
-    { label: '⊆', latex: '\\subseteq' },
-    { label: '⇒', latex: '\\Rightarrow' },
-    { label: '⇔', latex: '\\Leftrightarrow' },
-
-    { label: 'sin', latex: '\\sin' },
-    { label: 'cos', latex: '\\cos' },
-    { label: 'tan', latex: '\\tan' },
-    { label: 'cot', latex: '\\cot' },
-    { label: 'sec', latex: '\\sec' },
-    { label: 'csc', latex: '\\csc' },
-    { label: 'θ', latex: '\\theta' },
-    { label: 'π', latex: '\\pi' },
-
-    { label: 'log', latex: '\\log_{}' },
-    { label: 'ln', latex: '\\ln' },
-    { label: 'eˣ', latex: 'e^{}' },
-    { label: '10ˣ', latex: '10^{}' },
-
-    { label: '∫', latex: '\\int' },
-    { label: '∫ₐᵇ', latex: '\\int_{}^{}' },
-    { label: 'd/dx', latex: '\\frac{d}{dx}' },
-    { label: '∂', latex: '\\partial' },
-    { label: 'lim', latex: '\\lim_{x \\to }' },
-    { label: '∞', latex: '\\infty' },
-    { label: 'Σ', latex: '\\sum' },
-    { label: 'Π', latex: '\\prod' },
-
     { label: 'x²', latex: 'x^{2}' },
     { label: 'x³', latex: 'x^{3}' },
-    { label: 'x₁', latex: 'x_{1}' },
-    { label: '±', latex: '\\pm' },
-    // { label: '∓', latex: '\\mp' },
-    { label: '×', latex: '\\times' },
-    { label: '÷', latex: '\\div' },
-    { label: '≈', latex: '\\approx' },
-    { label: '=', latex: '=' },
-    { label: '≠', latex: '\\neq' },
-    { label: '<', latex: '<' },
-    { label: '>', latex: '>' },
-    { label: '≤', latex: '\\le' },
-    { label: '≥', latex: '\\ge' },
-
-    { label: 'a/b', latex: '\\frac{}{}' },
-    { label: '()', latex: '\\left( \\right)' },
-    { label: '[]', latex: '\\left[ \\right]' },
-    { label: '{}', latex: '\\left\\{ \\right\\}' },
-    { label: '^', latex: '^{}' },
-    { label: '_', latex: '_{}' },
-    { label: '|x|', latex: '\\left| x \\right|' },
     { label: '√', latex: '\\sqrt{}' },
     { label: '∛', latex: '\\sqrt[3]{}' },
+    { label: 'log', latex: '\\log_{}' },
+    { label: 'ln', latex: '\\ln' },
+    { label: 'e', latex: 'e' },
+    { label: '∫', latex: '\\int' },
+    { label: '∑', latex: '\\sum' },
+    { label: 'π', latex: '\\pi' },
+    { label: 'θ', latex: '\\theta' },
+    { label: '∞', latex: '\\infty' },
+    { label: '≤', latex: '\\le' },
+    { label: '≥', latex: '\\ge' },
+    { label: '±', latex: '\\pm' },
+    { label: '÷', latex: '\\div' },
+    { label: '×', latex: '\\times' },
+    { label: '≈', latex: '\\approx' },
+    { label: 'lim', latex: '\\lim' },
+    { label: 'frac', latex: '\\frac{}{}' },
 ];
 
 export default function ChatInput({ onSend, isSending }: ChatInputProps) {
@@ -82,21 +42,28 @@ export default function ChatInput({ onSend, isSending }: ChatInputProps) {
 
     const latexToMathjs = (latex: string) => {
         return latex
-            .replace(/\\frac{([^}]*)}{([^}]*)}/g, '($1)/($2)')
-            .replace(/\\sqrt{([^}]*)}/g, 'sqrt($1)')
-            .replace(/\\sin\s*([^\s()]+)/g, 'sin($1)')
-            .replace(/\\cos\s*([^\s()]+)/g, 'cos($1)')
-            .replace(/\\tan\s*([^\s()]+)/g, 'tan($1)')
-            .replace(/\\cot\s*([^\s()]+)/g, 'cot($1)')
-            .replace(/\\sec\s*([^\s()]+)/g, 'sec($1)')
-            .replace(/\\csc\s*([^\s()]+)/g, 'csc($1)')
-            .replace(/\\ln\s*([^\s()]+)/g, 'ln($1)')
-            .replace(/\\log\s*([^\s()]+)/g, 'log($1)')
+            .replace(/\\frac{([^{}]+)}{([^{}]+)}/g, '($1)/($2)')
+            .replace(/\\sqrt{([^{}]+)}/g, 'sqrt($1)')
+            .replace(/\\sqrt\[([^\]]+)\]{([^{}]+)}/g, '($2)^(1/$1)')
             .replace(/\\pi/g, 'pi')
-            .replace(/\s+/g, '')
-            .replace(/\\times/g, '*')
-            .replace(/\\cdot/g, '*')
-            .replace(/\\div/g, '/');
+            .replace(/\\times|\\cdot/g, '*')
+            .replace(/\\div/g, '/')
+            .replace(/\^/g, '^')
+            .replace(/\s+/g, '');
+    };
+    const canEvaluate = (expr: string) => {
+        return !expr.includes('=');
+    };
+    const evaluateExpression = (latex: string) => {
+        try {
+            const mathExpr = latexToMathjs(latex);
+
+            if (!canEvaluate(mathExpr)) return null;
+
+            return evaluate(mathExpr);
+        } catch {
+            return null;
+        }
     };
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -131,27 +98,7 @@ export default function ChatInput({ onSend, isSending }: ChatInputProps) {
         setMathValue('');
     };
 
-    // const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    //     event.preventDefault();
 
-    //     const content = mode === 'text' ? textValue.trim() : mathValue.trim();
-    //     console.log('🔥 SUBMIT CONTENT:', content, 'MODE:', mode);
-
-    //     if (!content || isSending) return;
-
-    //     if (mode === 'math') {
-    //         // Chỉ log LaTeX, không tính toán
-    //         console.log('📐 LaTeX input:', content);
-    //     }
-
-    //     onSend({
-    //         type: mode,
-    //         content,
-    //     });
-
-    //     setTextValue('');
-    //     setMathValue('');
-    // };
 
     const insertLatex = (latex: string) => {
         setMathValue((prev) => prev + latex);
@@ -209,6 +156,28 @@ export default function ChatInput({ onSend, isSending }: ChatInputProps) {
                 </div>
             )}
 
+            {mode === 'math' && mathValue && (
+                <div className="rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 p-4 space-y-3">
+                    <p className="text-xs text-slate-500">Preview:</p>
+
+                    <div className="text-lg">
+                        <BlockMath math={mathValue} />
+                    </div>
+
+                    {/* RESULT */}
+                    {(() => {
+                        const result = evaluateExpression(mathValue);
+                        if (result === null) return null;
+
+                        return (
+                            <div className="text-sm text-green-600 dark:text-green-400">
+                                = {result}
+                            </div>
+                        );
+                    })()}
+                </div>
+            )}
+
             {/* INPUT AREA */}
             <div className="grid gap-3 sm:grid-cols-[1fr_auto] items-end">
                 {mode === 'text' ? (
@@ -241,3 +210,4 @@ export default function ChatInput({ onSend, isSending }: ChatInputProps) {
         </form>
     );
 }
+
