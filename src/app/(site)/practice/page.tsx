@@ -18,7 +18,7 @@ export default function PracticePage() {
     const scrollContainerRef = useRef<HTMLDivElement | null>(null);
     const responseTimeoutRef = useRef<number | null>(null);
     // const [currentProblem, setCurrentProblem] = useState(mockProblems[0]);
-    const currentProblem = mockProblems[0];
+    const currentProblem = mockProblems[1];
 
     const handleHint = (type: HintType) => {
         const hintText = {
@@ -99,7 +99,7 @@ export default function PracticePage() {
                 <div className="max-w-[1600px] mx-auto grid  gap-6">
                     {/* <PracticeSidebar /> */}
 
-                    <main className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                    <main className="">
                         <ProblemCard problem={currentProblem} onHint={handleHint} />
 
 

@@ -14,6 +14,7 @@ function createMessageId() {
     return `msg-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
+// Khởi tạo tin nhắn ban đầu
 const defaultMessages: ChatMessage[] = [
     {
         id: createMessageId(),
