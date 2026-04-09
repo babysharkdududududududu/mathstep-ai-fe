@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ChatInput from './chat-input';
-import ChatMessage from './chat-message';
+import ChatMessage, { TypingIndicator } from './chat-message';
 // import PracticeSidebar from './practice-sidebar';
 import { ChatMessage as ChatMessageType, getAiResponse, getDefaultMessages } from './chat-utils';
 
@@ -102,20 +102,22 @@ export default function PracticePage() {
                     <main className="">
                         <ProblemCard problem={currentProblem} onHint={handleHint} />
 
-
                         <div className="gap-6 lg:grid-cols-[1.2fr_0.8fr]">
                             <div className="space-y-6">
 
-
-                                <div className="grid gap-4 rounded-[28px] border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-950">
-                                    <div ref={scrollContainerRef} className="space-y-5 max-h-[540px] overflow-y-auto pr-1">
+                                <div className="grid gap-4 rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900/50 p-4 sm:p-6 shadow-sm dark:shadow-lg">
+                                    <div ref={scrollContainerRef} className="space-y-4 max-h-[540px] overflow-y-auto pr-1 scroll-smooth">
                                         {messages.map((message) => (
                                             <ChatMessage key={message.id} message={message} />
                                         ))}
                                         {isSending ? (
-                                            <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950">
-                                                <p className="text-sm font-semibold text-slate-900 dark:text-white">AI Tutor</p>
-                                                <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-300">Đang trả lời câu hỏi của bạn...</p>
+                                            <div className="flex justify-start">
+                                                <div className="flex items-center gap-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-4 py-3 shadow-sm dark:shadow-lg">
+                                                    <div className="h-5 w-5 rounded-full bg-gradient-to-br from-indigo-400 to-blue-500 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
+                                                        AI
+                                                    </div>
+                                                    <TypingIndicator />
+                                                </div>
                                             </div>
                                         ) : null}
                                     </div>

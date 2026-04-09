@@ -50,13 +50,6 @@ const responseTemplates = [
     },
 ];
 
-// const fallbackResponse: ChatMessage = {
-//     id: createMessageId(),
-//     role: 'ai',
-//     title: 'AI Tutor',
-//     text: 'Hãy cho mình biết bạn muốn hỏi gì về phương trình này. Mình sẽ giải thích từng bước cho bạn.',
-//     hint: 'Bạn có thể hỏi: Làm sao để phân tích? hoặc Tại sao nghiệm là 2 và 3?',
-// };
 
 export function getDefaultMessages(): ChatMessage[] {
     return defaultMessages.map((message) => ({ ...message }));
@@ -83,7 +76,7 @@ export function getAiResponse(userInput: string, type: ChatMessageType = 'text')
         role: 'ai',
         type,
         title: 'AI Tutor',
-        text: 'Mình đã nhận được câu hỏi của bạn. Hãy cùng qua từng bước để giải phương trình này nhé.',
+        text: 'x^2 - 5x + 6 = 0',
         hint: 'Bắt đầu bằng cách tìm hai số nhân bằng 6 và tổng bằng -5.',
     };
 }
