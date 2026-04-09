@@ -18,6 +18,7 @@ interface ProblemCardProps {
 }
 
 export default function ProblemCard({ problem, onHint }: ProblemCardProps) {
+    console.log('Rendering ProblemCard with problem:', problem);
     const isLatex = problem.type === 'latex' || problem.title.includes('\\');
 
     return (

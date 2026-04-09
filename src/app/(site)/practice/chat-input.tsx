@@ -12,26 +12,13 @@ interface ChatInputProps {
 
 // Math formula toolbar buttons for common operations
 const mathButtons = [
-    { label: 'x²', latex: 'x^{2}' },
-    { label: 'x³', latex: 'x^{3}' },
-    { label: '√', latex: '\\sqrt{}' },
-    { label: '∛', latex: '\\sqrt[3]{}' },
-    { label: 'log', latex: '\\log_{}' },
-    { label: 'ln', latex: '\\ln' },
-    { label: 'e', latex: 'e' },
-    { label: '∫', latex: '\\int' },
-    { label: '∑', latex: '\\sum' },
-    { label: 'π', latex: '\\pi' },
-    { label: 'θ', latex: '\\theta' },
-    { label: '∞', latex: '\\infty' },
-    { label: '≤', latex: '\\le' },
-    { label: '≥', latex: '\\ge' },
-    { label: '±', latex: '\\pm' },
-    { label: '÷', latex: '\\div' },
-    { label: '×', latex: '\\times' },
-    { label: '≈', latex: '\\approx' },
-    { label: 'lim', latex: '\\lim' },
-    { label: 'frac', latex: '\\frac{}{}' },
+    { label: 'x²', latex: 'x^{2}' },{ label: 'x³', latex: 'x^{3}' },{ label: '√', latex: '\\sqrt{}' },{ label: '∛', latex: '\\sqrt[3]{}' },{ label: 'log', latex: '\\log_{}' },
+    { label: 'ln', latex: '\\ln' },{ label: 'e', latex: 'e' },{ label: '∫', latex: '\\int' },{ label: '∑', latex: '\\sum' },{ label: 'π', latex: '\\pi' },{ label: 'θ', latex: '\\theta' },
+    { label: '∞', latex: '\\infty' },{ label: '≤', latex: '\\le' },{ label: '≥', latex: '\\ge' },{ label: '±', latex: '\\pm' },{ label: '÷', latex: '\\div' },{ label: '×', latex: '\\times' },
+    { label: '≈', latex: '\\approx' },{ label: 'lim', latex: '\\lim' },{ label: 'frac', latex: '\\frac{}{}' },{ label: 'Hệ 2 PT', latex: '\\begin{cases} a_{1}x + b_{1}y = c_{1} \\\\ a_{2}x + b_{2}y = c_{2} \\end{cases}'},
+    { label: 'PT bậc 3', latex: 'ax^{3} + bx^{2} + cx + d = 0'},{ label: 'PT bậc 2', latex: 'ax^{2} + bx + c = 0' },
+    { label: '∑ (i=1→n)', latex: '\\sum_{i=1}^{n}'},{ label: '()', latex: '()' },{ label: 'x^n', latex: 'x^{}' },{ label: 'a_i', latex: 'a_{}' },
+    { label: 'AB→', latex: '\\overrightarrow{}' },{ label: '| |', latex: '\\left| {} \\right|' },
 ];
 
 export default function ChatInput({ onSend, isSending }: ChatInputProps) {
@@ -51,9 +38,7 @@ export default function ChatInput({ onSend, isSending }: ChatInputProps) {
             .replace(/\^/g, '^')
             .replace(/\s+/g, '');
     };
-    const canEvaluate = (expr: string) => {
-        return !expr.includes('=');
-    };
+    const canEvaluate = (expr: string) => { return !expr.includes('=');};
     const evaluateExpression = (latex: string) => {
         try {
             const mathExpr = latexToMathjs(latex);
@@ -73,14 +58,14 @@ export default function ChatInput({ onSend, isSending }: ChatInputProps) {
         if (!content || isSending) return;
 
         if (mode === 'math') {
-            // 1️⃣ Log LaTeX
+            // Log LaTeX
             console.log('📐 LaTeX input:', content);
 
-            // 2️⃣ Chuyển LaTeX sang MathJS
+            // Chuyển LaTeX sang MathJS
             const mathExpr = latexToMathjs(content);
             console.log('🔧 Converted MathJS expression:', mathExpr);
 
-            // 3️⃣ Tính toán
+            //  Tính toán
             try {
                 const result = evaluate(mathExpr);
                 console.log('✅ RESULT:', result);
@@ -137,7 +122,7 @@ export default function ChatInput({ onSend, isSending }: ChatInputProps) {
                 </button>
             </div>
 
-            {/* MATH TOOLBAR */}
+            {/* MATH EDITOR */}
             {mode === 'math' && showToolbar && (
                 <div className="rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 p-3">
                     <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-2">Formula symbols</p>
