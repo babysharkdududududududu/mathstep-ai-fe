@@ -14,6 +14,8 @@ import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { toast } from 'sonner';
+import Lottie from 'lottie-react';
+import loadingAnim from '@/assets/lottiefiles/loading.json';
 
 type Inputs = z.infer<typeof authValidation.login>;
 
@@ -33,6 +35,7 @@ export default function SignInForm() {
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
 
   const handleShowPassword = () => {
     setIsShowPassword(!isShowPassword);
@@ -53,7 +56,11 @@ export default function SignInForm() {
       }
 
       toast.success('Đăng nhập thành công. Chuyển đến onboarding...');
-      router.push('/onboarding');
+      setShowLoadingScreen(true);
+
+      setTimeout(() => {
+        router.push('/onboarding');
+      }, 60000);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Đăng nhập thất bại. Vui lòng thử lại.';
@@ -135,7 +142,15 @@ export default function SignInForm() {
         >
           {isLoading ? 'Signing in...' : 'Sign In'}
         </button>
+         {showLoadingScreen && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 dark:bg-black/70">
+    <div className="w-120 h-120">
+      <Lottie animationData={loadingAnim} loop />
+    </div>
+  </div>
+)}
       </div>
+     
     </form>
   );
 }
