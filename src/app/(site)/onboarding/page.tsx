@@ -79,9 +79,6 @@ export default function OnboardingPage() {
     router.push('/practice');
 };
 
-    const handleChoiceGrade = (grade: string) => {
-        setSelectedGrade(grade);
-    };
 
     return (
         <section className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center py-10 sm:py-16">
