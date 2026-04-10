@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Badge from './badge';
 import StepPill from './step-pill';
 import OptionButton from './option-button';
+import { submitStudentOnboarding } from '@/lib/onboarding/setup';
 
 const gradeOptions = ['Lớp 6', 'Lớp 7', 'Lớp 8', 'Lớp 9', 'Lớp 10', 'Lớp 11', 'Lớp 12'];
 const topicOptions = ['Đại số', 'Hình học', 'Giải tích'];
@@ -47,15 +48,39 @@ export default function OnboardingPage() {
     const nextDisabled = useMemo(() => {
         return !activeSelection;
     }, [activeSelection]);
+    function convertGrade(grade: string): string {
+    return grade.replace('Lớp', 'Grade').trim();
+}
 
-    const handleNext = () => {
-        if (step < 3) {
-            setStep(step + 1);
+    const handleNext = async () => {
+        console.log(step)
+    if (step === 1) {
+        try {
+            await submitStudentOnboarding(
+                {
+                    grade_level: convertGrade(selectedGrade),
+                },
+                localStorage.getItem('authToken') || ''
+
+            );
+        } catch (err) {
+            console.error(err);
+            alert('Onboarding failed');
             return;
         }
+    }
 
-        localStorage.setItem('completedOnboarding', 'true');
-        router.push('/practice');
+    if (step < 3) {
+        setStep(step + 1);
+        return;
+    }
+
+    localStorage.setItem('completedOnboarding', 'true');
+    router.push('/practice');
+};
+
+    const handleChoiceGrade = (grade: string) => {
+        setSelectedGrade(grade);
     };
 
     return (

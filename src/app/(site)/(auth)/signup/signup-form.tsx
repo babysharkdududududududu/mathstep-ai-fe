@@ -5,6 +5,8 @@ import { Input, InputGroup } from '@/components/ui/inputs';
 import { Label } from '@/components/ui/label';
 import { EyeCloseIcon, EyeIcon } from '@/icons/icons';
 import { authValidation } from '@/lib/zod/auth.schema';
+import { AuthService } from '@/lib/auth/service';
+import { useAuth } from '@/hooks/use-auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -16,6 +18,7 @@ type Inputs = z.infer<typeof authValidation.register>;
 
 export default function SignupForm() {
   const router = useRouter();
+  const { setToken } = useAuth();
 
   const form = useForm<Inputs>({
     resolver: zodResolver(authValidation.register),
@@ -26,9 +29,11 @@ export default function SignupForm() {
       password: '',
     },
   });
+
   const [rememberMe, setRememberMe] = useState(false);
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const handleShowPassword = () => {
     setIsShowPassword(!isShowPassword);
@@ -36,21 +41,45 @@ export default function SignupForm() {
 
   async function onSubmit(data: Inputs) {
     setIsLoading(true);
+    setApiError(null);
 
-    await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate API call
+    try {
+      const response = await AuthService.register({
+        email: data.email,
+        password: data.password,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        role: 'STUDENT', // Default to STUDENT, can be changed based on UI
+      });
 
-    localStorage.setItem('loggedIn', 'true');
-    localStorage.setItem('lastUser', data.email);
+      // Store token
+      setToken(response.access_token);
+      localStorage.setItem('loggedIn', 'true');
+      if (rememberMe) {
+        localStorage.setItem('lastUser', data.email);
+      }
 
-    toast.success('Đăng ký thành công. Tiếp tục đến onboarding...');
-
-    setIsLoading(false);
-    router.push('/onboarding');
+      toast.success('Đăng ký thành công. Tiếp tục đến onboarding...');
+      router.push('/onboarding');
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Đăng ký thất bại. Vui lòng thử lại.';
+      setApiError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        {apiError && (
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-sm col-span-full">
+            {apiError}
+          </div>
+        )}
+
         <Controller
           control={form.control}
           name="firstName"
@@ -143,3 +172,4 @@ export default function SignupForm() {
     </form>
   );
 }
+      
