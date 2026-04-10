@@ -42,34 +42,46 @@ export default function SignInForm() {
   };
 
   async function onSubmit(data: Inputs) {
-    setIsLoading(true);
-    setApiError(null);
+  setIsLoading(true);
+  setApiError(null);
+  setShowLoadingScreen(true);
 
-    try {
-      const response = await AuthService.login(data);
+  // 👇 ép React render loading trước khi chạy async nặng
+  await new Promise((resolve) => setTimeout(resolve, 100));
 
-      // Store token
-      setToken(response.access_token);
-      localStorage.setItem('loggedIn', 'true');
-      if (rememberMe) {
-        localStorage.setItem('lastUser', data.email);
-      }
+  try {
+    const response = await AuthService.login(data);
 
-      toast.success('Đăng nhập thành công. Chuyển đến onboarding...');
-      setShowLoadingScreen(true);
+    // Store token
+    setToken(response.access_token);
+    localStorage.setItem('loggedIn', 'true');
 
-      setTimeout(() => {
-        router.push('/onboarding');
-      }, 60000);
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Đăng nhập thất bại. Vui lòng thử lại.';
-      setApiError(errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
+    if (rememberMe) {
+      localStorage.setItem('lastUser', data.email);
     }
+
+    toast.success('Đăng nhập thành công. Chuyển đến onboarding...');
+
+    setShowLoadingScreen(true);
+
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    router.push('/onboarding');
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : 'Đăng nhập thất bại. Vui lòng thử lại.';
+
+    setApiError(errorMessage);
+    toast.error(errorMessage);
+
+    // ❗ chỉ tắt loading khi lỗi
+    setShowLoadingScreen(false);
+  } finally {
+    setIsLoading(false);
   }
+}
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -143,12 +155,12 @@ export default function SignInForm() {
           {isLoading ? 'Signing in...' : 'Sign In'}
         </button>
          {showLoadingScreen && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 dark:bg-black/70">
-    <div className="w-120 h-120">
-      <Lottie animationData={loadingAnim} loop />
-    </div>
-  </div>
-)}
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 dark:bg-black/70">
+            <div className="w-120 h-120">
+              <Lottie animationData={loadingAnim} loop />
+            </div>
+          </div>
+        )}
       </div>
      
     </form>
