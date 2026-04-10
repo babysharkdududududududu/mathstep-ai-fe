@@ -28,11 +28,13 @@ export function SignInWithGoogle() {
     const credential = await new Promise<string>((resolve, reject) => {
       window.google.accounts.id.initialize({
         client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "",
-        callback: (response: any) => {
+        callback: (response: {
+          credential?: string;
+        }) => {
           if (response.credential) {
             resolve(response.credential);
           } else {
-            reject("No credential returned");
+            reject(new Error("No credential returned"));
           }
         },
       });
@@ -90,6 +92,19 @@ export function SignInWithGithub() {
 // Declare global window interface for Google Sign-In
 declare global {
   interface Window {
-    google: any;
+    google: {
+      accounts: {
+        id: {
+          initialize: (config: {
+            client_id: string;
+            callback: (response: {
+              credential?: string;
+              select_by?: string;
+            }) => void;
+          }) => void;
+          prompt: () => void;
+        };
+      };
+    };
   }
 }

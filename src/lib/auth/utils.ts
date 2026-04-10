@@ -38,7 +38,7 @@ export function isTokenExpired(token: string): boolean {
  * Decode JWT token (without signature verification)
  * Only for accessing public claims, not for security verification
  */
-export function decodeToken(token: string): Record<string, any> | null {
+export function decodeToken(token: string): Record<string, unknown> | null {
   try {
     const parts = token.split('.');
     if (parts.length !== 3) {
