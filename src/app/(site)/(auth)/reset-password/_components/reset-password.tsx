@@ -2,7 +2,10 @@
 
 import { PasswordInput } from '@/components/ui/inputs';
 import { authValidation } from '@/lib/zod/auth.schema';
+import { AuthService } from '@/lib/auth/service';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -15,7 +18,9 @@ type PropsType = {
 };
 
 export default function ResetPasswordForm({ resetToken }: PropsType) {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const form = useForm<Inputs>({
     resolver: zodResolver(authValidation.resetPassword),
@@ -27,19 +32,31 @@ export default function ResetPasswordForm({ resetToken }: PropsType) {
 
   async function onSubmit(data: Inputs) {
     setIsLoading(true);
+    setApiError(null);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate API call
+      console.log('[ResetPasswordForm] Submitting password reset');
 
-      toast.success(
-        <pre>
-          <code>{JSON.stringify({ data, resetToken }, null, 2)}</code>
-        </pre>
-      );
+      const response = await AuthService.resetPassword({
+        token: resetToken,
+        new_password: data.newPassword,
+      });
+
+      console.log('[ResetPasswordForm] Success:', response.message);
+
+      toast.success('Password reset successfully! Redirecting to login...');
 
       form.reset();
+
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      router.push('/signin');
     } catch (error) {
-      console.error(error);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to reset password';
+      
+      console.error('[ResetPasswordForm] Error:', errorMessage);
+      setApiError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -58,6 +75,12 @@ export default function ResetPasswordForm({ resetToken }: PropsType) {
 
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="grid gap-5">
+          {apiError && (
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-sm">
+              {apiError}
+            </div>
+          )}
+
           <Controller
             control={form.control}
             name="newPassword"
@@ -89,8 +112,9 @@ export default function ResetPasswordForm({ resetToken }: PropsType) {
           />
 
           <button
-            className="bg-primary-500 hover:bg-primary-600 transition py-3 px-6 w-full font-medium text-white text-sm rounded-full"
+            className="bg-primary-500 hover:bg-primary-600 transition py-3 px-6 w-full font-medium text-white text-sm rounded-full disabled:opacity-75"
             disabled={isLoading}
+            type="submit"
           >
             {isLoading ? 'Submitting...' : 'Reset Password'}
           </button>

@@ -44,6 +44,13 @@ export default function SignupForm() {
     setApiError(null);
 
     try {
+      console.log('[SignupForm] Submitting with:', { 
+        email: data.email, 
+        firstName: data.firstName,
+        lastName: data.lastName,
+        keepMeLoggedIn: rememberMe 
+      });
+
       const response = await AuthService.register({
         email: data.email,
         password: data.password,
@@ -52,18 +59,43 @@ export default function SignupForm() {
         role: 'STUDENT', // Default to STUDENT, can be changed based on UI
       });
 
-      // Store token
+      console.log('[SignupForm] Register response:', { 
+        hasAccessToken: !!response.access_token,
+        hasRefreshToken: !!response.refresh_token,
+        userId: response.user_id,
+        email: response.email
+      });
+
+      // Store access token (always)
       setToken(response.access_token);
+
+      // Store refresh token if "Keep me logged in" is checked
+      if (rememberMe && response.refresh_token) {
+        // TypeScript note: setTokens is now available in useAuth hook
+        // We'll store both tokens together
+        localStorage.setItem('authToken', response.access_token);
+        localStorage.setItem('refreshToken', response.refresh_token);
+        console.log('[SignupForm] Stored refresh token - "Keep me logged in" active');
+      } else {
+        // Clear refresh token if not checked
+        localStorage.removeItem('refreshToken');
+      }
+
       localStorage.setItem('loggedIn', 'true');
       if (rememberMe) {
         localStorage.setItem('lastUser', data.email);
       }
 
       toast.success('Đăng ký thành công. Tiếp tục đến onboarding...');
+      
+      // Brief delay to show toast
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       router.push('/onboarding');
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Đăng ký thất bại. Vui lòng thử lại.';
+      
+      console.error('[SignupForm] Registration error:', errorMessage);
       setApiError(errorMessage);
       toast.error(errorMessage);
     } finally {

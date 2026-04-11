@@ -50,10 +50,32 @@ export default function SignInForm() {
   await new Promise((resolve) => setTimeout(resolve, 100));
 
   try {
+    console.log('[SignInForm] Submitting login:', { 
+      email: data.email,
+      keepMeLoggedIn: rememberMe 
+    });
+
     const response = await AuthService.login(data);
 
-    // Store token
+    console.log('[SignInForm] Login response:', { 
+      hasAccessToken: !!response.access_token,
+      hasRefreshToken: !!response.refresh_token,
+      userId: response.user_id,
+      email: response.email
+    });
+
+    // Store access token (always)
     setToken(response.access_token);
+
+    // Store refresh token if "Keep me logged in" is checked
+    if (rememberMe && response.refresh_token) {
+      localStorage.setItem('refreshToken', response.refresh_token);
+      console.log('[SignInForm] Stored refresh token - "Keep me logged in" active');
+    } else {
+      // Clear refresh token if not checked
+      localStorage.removeItem('refreshToken');
+    }
+
     localStorage.setItem('loggedIn', 'true');
 
     if (rememberMe) {
@@ -73,6 +95,7 @@ export default function SignInForm() {
         ? error.message
         : 'Đăng nhập thất bại. Vui lòng thử lại.';
 
+    console.error('[SignInForm] Login error:', errorMessage);
     setApiError(errorMessage);
     toast.error(errorMessage);
 
