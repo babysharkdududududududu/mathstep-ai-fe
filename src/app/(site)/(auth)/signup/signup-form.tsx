@@ -56,7 +56,7 @@ export default function SignupForm() {
         password: data.password,
         firstName: data.firstName,
         lastName: data.lastName,
-        role: 'STUDENT', // Default to STUDENT, can be changed based on UI
+        role: 'STUDENT',
       });
 
       console.log('[SignupForm] Register response:', { 
@@ -66,18 +66,13 @@ export default function SignupForm() {
         email: response.email
       });
 
-      // Store access token (always)
       setToken(response.access_token);
 
-      // Store refresh token if "Keep me logged in" is checked
       if (rememberMe && response.refresh_token) {
-        // TypeScript note: setTokens is now available in useAuth hook
-        // We'll store both tokens together
         localStorage.setItem('authToken', response.access_token);
         localStorage.setItem('refreshToken', response.refresh_token);
         console.log('[SignupForm] Stored refresh token - "Keep me logged in" active');
       } else {
-        // Clear refresh token if not checked
         localStorage.removeItem('refreshToken');
       }
 
@@ -88,7 +83,6 @@ export default function SignupForm() {
 
       toast.success('Đăng ký thành công. Tiếp tục đến onboarding...');
       
-      // Brief delay to show toast
       await new Promise((resolve) => setTimeout(resolve, 1000));
       router.push('/onboarding');
     } catch (error) {

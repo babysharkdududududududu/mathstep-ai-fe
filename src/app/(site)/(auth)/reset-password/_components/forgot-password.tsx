@@ -19,6 +19,7 @@ type PropsType = {
 export default function ForgotPasswordForm({ invalidToken }: PropsType) {
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [showGoogleMessage, setShowGoogleMessage] = useState(false);
 
   const form = useForm<Inputs>({
     resolver: zodResolver(authValidation.forgotPasswordForm),
@@ -30,6 +31,7 @@ export default function ForgotPasswordForm({ invalidToken }: PropsType) {
   async function onSubmit(data: Inputs) {
     setIsLoading(true);
     setApiError(null);
+    setShowGoogleMessage(false);
 
     try {
       console.log('[ForgotPasswordForm] Submitting for email:', data.email);
@@ -50,7 +52,17 @@ export default function ForgotPasswordForm({ invalidToken }: PropsType) {
         error instanceof Error ? error.message : 'Failed to send reset email';
       
       console.error('[ForgotPasswordForm] Error:', errorMessage);
-      setApiError(errorMessage);
+      
+      // Check if error message indicates Google account
+      if (
+        errorMessage.toLowerCase().includes('google') ||
+        errorMessage.toLowerCase().includes('different auth method')
+      ) {
+        setShowGoogleMessage(true);
+      } else {
+        setApiError(errorMessage);
+      }
+      
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -80,6 +92,12 @@ export default function ForgotPasswordForm({ invalidToken }: PropsType) {
           {apiError && (
             <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-sm">
               {apiError}
+            </div>
+          )}
+
+          {showGoogleMessage && (
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 px-4 py-3 rounded-lg text-sm">
+              <strong>ℹ️ Account Sign-In Method:</strong> This account is connected to Google Sign-In. Please use the "Sign in with Google" button on the login page instead.
             </div>
           )}
 
