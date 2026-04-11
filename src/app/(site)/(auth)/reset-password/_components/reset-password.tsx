@@ -4,7 +4,6 @@ import { PasswordInput } from '@/components/ui/inputs';
 import { authValidation } from '@/lib/zod/auth.schema';
 import { AuthService } from '@/lib/auth/service';
 import { zodResolver } from '@hookform/resolvers/zod';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';

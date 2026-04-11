@@ -19,7 +19,7 @@
  * ```
  */
 
-import { AuthService } from './service';
+import { AuthService } from "./service";
 
 type TokenGetters = {
   getAccessToken: () => string | null;
@@ -50,28 +50,32 @@ const onRefreshed = (token: string) => {
 export function setupApiInterceptor(
   getters: TokenGetters,
   setters: TokenSetters,
-  router: Navigation
+  router: Navigation,
 ) {
   // Override global fetch to intercept 401 responses
   const originalFetch = window.fetch;
 
   window.fetch = async function (
     input: RequestInfo | URL,
-    init?: RequestInit
+    init?: RequestInit,
   ): Promise<Response> {
-    let response = await originalFetch(input, init);
+    const response = await originalFetch(input, init);
 
     // Check if we got a 401 Unauthorized
     if (response.status === 401) {
-      console.log('[API Interceptor] 401 Unauthorized - attempting token refresh');
+      console.log(
+        "[API Interceptor] 401 Unauthorized - attempting token refresh",
+      );
 
       const refreshToken = getters.getRefreshToken();
 
       if (!refreshToken) {
         // No refresh token available - redirect to login
-        console.log('[API Interceptor] No refresh token available - redirecting to login');
+        console.log(
+          "[API Interceptor] No refresh token available - redirecting to login",
+        );
         setters.clearTokens();
-        router.push('/signin');
+        router.push("/signin");
         return response;
       }
 
@@ -85,8 +89,13 @@ export function setupApiInterceptor(
             if (!clonedInit.headers) {
               clonedInit.headers = {};
             }
-            if (typeof clonedInit.headers === 'object' && clonedInit.headers !== null) {
-              (clonedInit.headers as any).Authorization = `Bearer ${newToken}`;
+            if (
+              typeof clonedInit.headers === "object" &&
+              clonedInit.headers !== null
+            ) {
+              const headers = new Headers(clonedInit.headers || {});
+              headers.set("Authorization", `Bearer ${newToken}`);
+              clonedInit.headers = headers;
             }
             resolve(originalFetch(input, clonedInit));
           });
@@ -100,7 +109,7 @@ export function setupApiInterceptor(
         const refreshResponse = await AuthService.refreshToken(refreshToken);
         const newAccessToken = refreshResponse.access_token;
 
-        console.log('[API Interceptor] Token refreshed successfully');
+        console.log("[API Interceptor] Token refreshed successfully");
 
         // Update stored token
         setters.setAccessToken(newAccessToken);
@@ -114,20 +123,25 @@ export function setupApiInterceptor(
         if (!clonedInit.headers) {
           clonedInit.headers = {};
         }
-        if (typeof clonedInit.headers === 'object' && clonedInit.headers !== null) {
-          (clonedInit.headers as any).Authorization = `Bearer ${newAccessToken}`;
+        if (
+          typeof clonedInit.headers === "object" &&
+          clonedInit.headers !== null
+        ) {
+          const headers = new Headers(clonedInit.headers || {});
+          headers.set("Authorization", `Bearer ${newAccessToken}`);
+          clonedInit.headers = headers;
         }
 
         return originalFetch(input, clonedInit);
       } catch (error) {
-        console.error('[API Interceptor] Token refresh failed:', error);
+        console.error("[API Interceptor] Token refresh failed:", error);
 
         isRefreshing = false;
         refreshSubscribers = [];
 
         // Refresh failed - clear tokens and redirect to login
         setters.clearTokens();
-        router.push('/signin');
+        router.push("/signin");
 
         return response;
       }
@@ -136,7 +150,7 @@ export function setupApiInterceptor(
     return response;
   };
 
-  console.log('[API Interceptor] Configured');
+  console.log("[API Interceptor] Configured");
 }
 
 /**
