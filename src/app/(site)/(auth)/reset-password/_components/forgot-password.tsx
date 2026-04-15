@@ -97,7 +97,7 @@ export default function ForgotPasswordForm({ invalidToken }: PropsType) {
 
           {showGoogleMessage && (
             <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 px-4 py-3 rounded-lg text-sm">
-              <strong>ℹ️ Account Sign-In Method:</strong> This account is connected to Google Sign-In. Please use the &quot;Sign in with Google&quot; button on the login page instead.
+              <strong>ℹ️ Account Sign-In Method:</strong> This account is connected to Google Sign-In. Please use the "Sign in with Google" button on the login page instead.
             </div>
           )}
 
