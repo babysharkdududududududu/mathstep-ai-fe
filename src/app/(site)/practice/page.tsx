@@ -4,10 +4,9 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ChatInput from './chat-input';
 import ChatMessage, { TypingIndicator } from './chat-message';
-// import PracticeSidebar from './practice-sidebar';
+import PracticeSidebar from './practice-sidebar';
 import { ChatMessage as ChatMessageType, getAiResponse, getDefaultMessages } from './chat-utils';
 
-// const problemTitle = 'x² - 5x + 6 = 0';
 import ProblemCard, { HintType } from './problem-card';
 import { mockProblems } from './mock-problems';
 
@@ -17,7 +16,6 @@ export default function PracticePage() {
     const [isSending, setIsSending] = useState(false);
     const scrollContainerRef = useRef<HTMLDivElement | null>(null);
     const responseTimeoutRef = useRef<number | null>(null);
-    // const [currentProblem, setCurrentProblem] = useState(mockProblems[0]);
     const currentProblem = mockProblems[1];
 
     const handleHint = (type: HintType) => {
@@ -47,7 +45,6 @@ export default function PracticePage() {
     }, [router]);
 
     useEffect(() => {
-        // Scroll chat to the bottom when new messages are added.
         if (scrollContainerRef.current) {
             scrollContainerRef.current.scrollTo({
                 top: scrollContainerRef.current.scrollHeight,
@@ -79,14 +76,11 @@ export default function PracticePage() {
         setMessages((current) => [...current, userMessage]);
         setIsSending(true);
 
-        // Simulated AI response. Replace this with a real API request later.
         responseTimeoutRef.current = window.setTimeout(() => {
             const aiMessage = getAiResponse(payload.content, payload.type);
             setMessages((current) => [...current, aiMessage]);
             setIsSending(false);
         }, 700);
-
-
     };
 
     return (
@@ -96,8 +90,7 @@ export default function PracticePage() {
             <div className="w-full px-6">
 
                 {/* centered content */}
-                <div className="max-w-[1600px] mx-auto grid  gap-6">
-                    {/* <PracticeSidebar /> */}
+                <div className="max-w-[1600px] mx-auto grid gap-6 lg:grid-cols-[1fr_320px]">
 
                     <main className="">
                         <ProblemCard problem={currentProblem} onHint={handleHint} />
@@ -129,7 +122,9 @@ export default function PracticePage() {
 
                         </div>
                     </main>
-                    {/* <PracticeSidebar /> */}
+
+                    {/* Right Sidebar — user profile data from API */}
+                    <PracticeSidebar />
 
                 </div>
             </div>

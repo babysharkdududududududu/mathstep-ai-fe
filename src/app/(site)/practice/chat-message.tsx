@@ -77,7 +77,7 @@ function MessageBubble({isAi,title,content,hint,isMath,}: {isAi: boolean;title?:
                 )}
 
                 <div
-                    className={`text-sm sm:text-base leading-relaxedoverflow-x-auto overflow-y-hidden
+                    className={`text-sm sm:text-base leading-relaxed overflow-x-auto overflow-y-hidden
                         ${isAi ? 'text-slate-700 dark:text-slate-200' : 'text-white'}
                     `}
                 >
